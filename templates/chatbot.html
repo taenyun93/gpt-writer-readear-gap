@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title> My AI Writing Assistant </title>
+  <style>
+    .chat-container {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      margin: 20px;
+    }
+    .chat-text {
+      font-size: 15px;
+    }
+  </style>
+</head>
+<body>
+  {% block content %}
+    <h1>{% block title %} AI Writing Assistant {% endblock %}</h1>
+    <div style="width: 90%; margin: auto">
+        {% for chat in chats %}
+            {% if loop.index % 2 == 0 %}
+                {% set bg_color = '#e6f9ff' %}
+                {% set role = "You" %}
+            {% else %}
+                {% set bg_color = '#eee' %}
+                {% set role = "AI Writing Assistant" %}
+            {% endif %}
+            <div class="chat-container" style="background-color: {{ bg_color }}">
+                <div class="chat-text">
+                  <p><strong>{{ role }}</strong></p>
+                  <p>{{ chat|safe }}</p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+  {% endblock %}
+  <form id="myForm" method="post" action="{{ url_for('chatbotWait',PID=PID,thread_id=thread_id,assistant_id=assistant_id,user_input=user_input) }}">
+      <table width="90%" style="margin: auto;">
+          <tr>
+              <td>
+                  <label for="message"><strong>Message: </strong></label>
+              </td>
+          </tr>
+          <tr>
+              <td>
+                  <textarea id="message" name="message" required oninput="adjustTextareaHeight()" onkeydown="handleKeyPress(event)" style="width: 100%; height: auto; overflow-y: hidden"></textarea>
+              </td>
+          </tr>
+          <tr>
+              <td style="text-align: right;">
+                  <button id="submitBtn" type="submit"><strong>Send</strong></button>
+              </td>
+          </tr>
+      </table>
+  </form>
+
+  <script>
+  function adjustTextareaHeight() {
+      var textarea = document.getElementById('message');
+      textarea.style.height = 'auto';
+      textarea.style.height = textarea.scrollHeight + 'px';
+  }
+
+  function handleKeyPress(event) {
+      if (event.key === 'Enter' && !event.shiftKey) {
+          event.preventDefault(); // Prevent default to avoid new line
+          document.getElementById('myForm').submit(); // Submit the form
+      }
+  }
+  </script>
+</body>
+</html>
